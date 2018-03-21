@@ -122,12 +122,14 @@
     }
 
 ### 9、屏幕适配（18:9）、常见布局  ###
+
 - LinearLayout
 - RelativeLayout
 - FrameLayout
 - TabLayout
 - AbsoluteLayout
-- （1）、支持不同尺寸的设备
+
+	（1）、对于不同尺寸的设备
 	1 使用 "wrap_content" 和 "match_parent"
 	2 使用相对布局
 	3 使用尺寸限定符
@@ -136,7 +138,7 @@
 	6 使用Nine-patch 图片
 	7 使用PercentFrameLayout
 
-	（2）、支持不同密度的设备
+	（2）、对于不同密度的设备
 	1 使用使用设备独立像素（dp 或sp）
 	2 提供可选择性的位图
 	3 、使用流式布局
@@ -170,10 +172,34 @@ HTTP请求报文由3部分组成（**请求行+请求头+请求体**）
    参数前加上@DrawableRes注解即表示参数只接受图片类型
 ### 14、mvp架构 mvvm架构 ###
 ### 15、webview使用简述、安全漏洞及android代码和js交互 ###
+**基本用法：**
+
+加载在线URL(必须在主线程中执行,网址必须完整即以http://开始)
+>void loadUrl(String url)
+
+想实现在webview中打开网址而不是打开系统浏览器则需要设置
+>mWebView.setWebViewClient(new WebViewClient());
+
+加载本地的html代码：
+>url = "file:///android_asset/web.html"; //Assets目录下
+>
+>url = "file://" + File_Path + "web.html"; //手机目录下
+>
+>或者 url = "file:///storage/emulated/0/offline/web.html"
+
+还有一些基本设置
+>//开启javascript支持  
+>webSettings.setJavaScriptEnabled(true);   
+>// 设置可以支持缩放  
+>webSettings.setSupportZoom(true);  
+>// 设置出现缩放工具  
+>webSettings.setBuiltInZoomControls(true); 
 
 **JS调用Java代码**
 
-主要是用到WebView下面的一个函数`public void addJavascriptInterface(Object obj, String interfaceName)`
+主要是用到WebView下面的一个函数
+>public void addJavascriptInterface(Object obj, String interfaceName)
+
 这个函数有两个参数：
 
 - Object obj：interfaceName所绑定的对象
@@ -371,7 +397,7 @@ java代码同上就要这样改：
 ### 24、圆形图片剪裁 ###
 ### 25、git代码冲突解决 ###
 ### 26、linux内核 ###
-### 27、职业规划，工作因素自定义排序 ###
+### 27、职业规划，工作权重自定义排序 ###
 ### 28、spannstringbuilder ###
    比StringBuilder强大的字符拼接接口，可以更改字符串背景色，某段到某段的字符style，甚至可以将某段字符替换成图片等
 ### 29、jvm、davilk、ART ###
@@ -400,7 +426,36 @@ getContentResolver
 - 尽量使用静态内部类防止Activity泄露，例如AsyncTask会隐士的持有Activity的引用
 ### 34、Rxjava操作符 ###
 ### 35、崩溃、bug、ANR收集 ###
-36、IM实时通讯
+
+- 自己封装Logutil
+- 腾讯Bugly、友盟
+- 表脸的做法android:largeHeap="true"使用最大内存值
+- 三方测试，如testin、优测
+- 继承UncaughtExceptionHandler，当程序发生Uncaught异常的时候,有该类来接管程序,并记录错误日志
+- 自己搭建bug收集平台
+- ANR会自动创建文件记录，使用adb pull /data/anr/traces.txt拉出文件 
+
+
+### 36、IM实时通讯 ###
+XMPP协议一句话总结就是一个可以用于IM功能的协议，传输的是xml数据
+
+自建的有**openfire+spark+smack**实现即时通讯
+
+- openfire是一个即时通讯服务器，也称之为即时通讯平台，基于XMPP协议，用于信息的转发
+- spark从本质上来说就是一个运行在PC上的java程序，可以看成是官方为我们实现好的运行在PC上的客户端，我们只需要下载使用即可
+- smack是一套封装好了的用于实现XMPP协议传输的API，是一个非常简单并且功能强大的类库，给用户发送消息只需要三行代码
+
+**第三方IM、推送服务**
+
+- 极光推送、极光IM、极光分享
+- 环信SDK（推荐）
+- 融云
+- 网易云信
+- 腾讯信鸽（主要做推送）
+
+**MQTT协议**
+
+>MQTT是Android端实现消息推送方案之一，是一个轻量级的消息发布/订阅协议，它是实现基于手机客户端的消息推送服务器的理想解决方案
 
 
 
