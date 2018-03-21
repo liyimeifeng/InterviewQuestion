@@ -143,15 +143,217 @@
 
 
 ### 10、http请求头，与https的区别 ###
+https由http + SSL协议来进行加密，SSL依靠证书来验证服务器的身份。
+
+- https协议需要申请CA证书，会产生一定的费用
+- http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议
+- 两者用的完全不同的连接方式，http用的端口是80，https端口是443
+- http连接是无状态的，https是加密传输、身份认证的网络协议，更安全
+
+HTTP请求报文由3部分组成（**请求行+请求头+请求体**）
+
+![请求报文](https://i.imgur.com/VThSUc0.jpg)
+![请求详细内容](https://i.imgur.com/VwO6jO4.jpg)
+**常见的HTTP请求报文头属性**
+
+- Accept 告诉服务端 客户端接受什么类型的响应 `Accept:text/html,application/xhtml+xml`
+- Cookie 客户端的Cookie就是通过这个报文头属性传给服务端
+`Cookie: $Version=1; Skin=new;jsessionid=5F4771183629C9834F8382E23BE13C4C`
+- Referer表示这个请求是从哪个URL过来的
+`Referer:https://www.baidu.com`
+- Cache-Control 对缓存进行控制，要还是不要，要多久`Cache-Control: no-cache `
+- Accept-Language 接受的语言 `Accept-Language:zh-CN,zh;q=0.9`
+- User-Agent 代理服务器`User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64)`
 ### 11、view缓存 ###
 ### 12、socket通信 ###
 ### 13、@DrawableRes图片注解、@LayoutRes注解 ###
    参数前加上@DrawableRes注解即表示参数只接受图片类型
 ### 14、mvp架构 mvvm架构 ###
-### 15、webview使用解析及安全漏洞 ###
+### 15、webview使用简述、安全漏洞及android代码和js交互 ###
+
+**JS调用Java代码**
+
+主要是用到WebView下面的一个函数`public void addJavascriptInterface(Object obj, String interfaceName)`
+这个函数有两个参数：
+
+- Object obj：interfaceName所绑定的对象
+- String interfaceName：所绑定的对象所对应的名称
+
+举一个例子，点击JS中的按钮调用Android的Toast显示，下面是Android中代码
+
+    public class MyActivity extends Activity {
+        private WebView mWebView;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.main);
+            mWebView = (WebView) findViewById(R.id.webview);
+
+            WebSettings webSettings = mWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            mWebView.addJavascriptInterface(new JSBridge(), "android");
+            mWebView.loadUrl("file:///android_asset/web.html");
+        }
+
+        public class JSBridge {
+            //在android:targetSdkVersion数值为17（Android4.2）及以上的APP中，JS只能访问带有 @JavascriptInterface注解的Java函数，所以如果你的android:targetSdkVersion是17+，与JS交互的Native函数中，必须添加JavascriptInterface注解，不然无效
+            @JavascriptInterface
+            public void toastMessage(String message) {
+                Toast.makeText(getApplicationContext(), "JS--->Natvie:" + message, Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }	
+
+html代码如下：
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+    	<title>Title</title>
+    	<h1>WebView加载本地HTML</h1>
+    	<input type="button" value="js调native" onclick="ok()">
+    </head>
+    <body>
+    <script type="text/javascript">
+    	function ok() {
+       		android.toastMessage("我是来自JS的消息！");
+    	}
+    </script>
+    </body>
+    </html> 
+
+**Java调用Js代码**
+
+    public class MyActivity extends Activity {
+        private WebView mWebView;
+        private Button mBtn;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.main);
+
+            mWebView = (WebView) findViewById(R.id.webview);
+            mBtn = (Button) findViewById(R.id.btn);
+
+            WebSettings webSettings = mWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            mWebView.loadUrl("file:///android_asset/web.html");
+
+            mBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mWebView.loadUrl("javascript:sum(3,8)");
+                }
+            });
+        }
+    }
+
+看看在JAVA中调用JS函数的方法：
+
+    String url = "javascript:methodName(params……);"  
+    webView.loadUrl(url);
+javascript:伪协议让我们可以通过一个链接来调用JavaScript函数 ，中间methodName是JavaScript中实现的函数 ，jsonParams是传入的参数列表 。
+
+html代码：
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+    	<title>Title</title>
+    	<h1>WebView加载本地HTML</h1>
+    	<input type="button" value="js调native" onclick="ok()">
+	</head>
+	<body>
+	<script type="text/javascript">
+    	function ok() {
+       		android.toastMessage("我是来自JS的消息！");
+    	}
+    	function sum(i,m){
+       		alert("Native--->JS  sum=" + (i + m));
+    	}
+	</script>
+	</body>
+	</html> 
+
+接着用java去取得Js中的返回值
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Title</title>
+	    <h1>WebView加载本地HTML</h1>
+	    <input type="button" value="js调native" onclick="ok()">
+	</head>
+	<body>
+	<script type="text/javascript">
+	    function ok() {
+	       android.toastMessage("我是来自JS的消息！");
+	    }
+	    function sum(i,m)
+	    {   
+	       var result = i+m;
+	       alert("Native--->JS  sum=" + result);
+	       android.onSumResult(result);
+	    }
+	</script>
+	</body>
+	</html>
+
+java代码同上就要这样改：
+
+    public class JSBridge {
+        //在android:targetSdkVersion数值为17（Android4.2）及以上的APP中，JS只能访问带有 @JavascriptInterface注解的Java函数，所以如果你的android:targetSdkVersion是17+，与JS交互的Native函数中，必须添加JavascriptInterface注解，不然无效
+        @JavascriptInterface
+        public void toastMessage(String message) {
+            Toast.makeText(getApplicationContext(), "JS--->Natvie:" + message, Toast.LENGTH_LONG).show();
+        }
+
+        @JavascriptInterface
+        public void onSumResult(int result) {
+            Toast.makeText(this,"received result:"+result,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+**Android 4.4之后有了改动：**
+
+    function sum(i,m)
+    {
+       var result = i+m;
+       return result;
+    }
+
+其次java代码时用`evaluateJavascript`方法调用：
+
+    mWebView.evaluateJavascript("sum(3,8)", new ValueCallback<String>() {
+        @Override
+        public void onReceiveValue(String value) {
+            Toast.makeText(getApplicationContext(),"Android 4.4 received result:"+value,Toast.LENGTH_SHORT).show();
+        }
+    });
+
+注意：
+
+
+1. evaluateJavascript须在html加载完毕后执行，否则返回的value为null。 
+2. 上面限定了结果返回结果为String，对于简单的类型会尝试转换成字符串返回，对于复杂的数据类型，建议以字符串形式的json返回。
+3.  evaluateJavascript方法必须在UI线程（主线程）调用，因此onReceiveValue也执行在主线程。 
+
+
 ### 16、二分算法，快速排序、冒泡排序、递归算法 ###
+
+
+
+
 ### 17、自定义view ###
 ### 18、recyclerview优化、item缓存 ###
+
 ### 19、图片缓存、算法 ###
 前有软引用softRefenrence、弱引用，后有Lrucache算法，即最近最少使用算法，标记最近最少改动的文件。先计算应用总内存大小，一般再设置缓存大小为总内存的几分之一，
 缓存超出就删除就缓存，也有DiskLruCache，硬盘缓存算法，需要设置SD卡缓存路径，一般为/sdcard/Android/data/package_name/cache。
@@ -197,6 +399,8 @@ getContentResolver
 - 对I/O、Cursor使用完之后要关闭
 - 尽量使用静态内部类防止Activity泄露，例如AsyncTask会隐士的持有Activity的引用
 ### 34、Rxjava操作符 ###
+### 35、崩溃、bug、ANR收集 ###
+36、IM实时通讯
 
 
 
