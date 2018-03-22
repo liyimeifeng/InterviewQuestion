@@ -35,7 +35,13 @@
 	当我们给put()方法传递键和值时，我们先对键调用hashCode()方法，返回的hashCode用于找到bucket位置来储存Entry对象。
 ### 6、threadlocal ###
 ### 7、性能优化、布局优化 ###
-	性能优化主要有布局优化、绘制优化、内存泄漏优化、响应速度优化、线程优化、bitmap优化等
+- App启动速度优化
+- 布局优化、绘制优化
+- 内存优化
+- apk瘦身
+- 电量优化
+- 线程优化
+- 内存泄漏优化
 	
 	布局优化：尽量使用Relativelayout，减少层级绘制，多使用<include>、<merge>(结合include使用，可去除include之中重复的linearlayout
 	)、<viewstub>(继承自view，宽高都是0，轻量级)
@@ -44,11 +50,12 @@
 	onDestroy中没有停止（也会持有activity的引用，即使activity关闭，属性动画也一直存在）
 	线程优化：采用线程池，控制最大并发数，避免经常new Thread带来系统开销，消耗资源
 	建议：
-	避免过多的创建对象
-	常量使用static final来修饰
-	尽量用静态内部类
-	采用软引用和弱引用
-	采用内存缓存和磁盘缓存
+- 避免过多的创建对象
+- 常量使用static final来修饰
+- 尽量用静态内部类（静态内部类：不依赖于外部，相当于重新建立的一个新类，所以不能引用外部非静态成员。如果使用非静态内部类。当非静态内部类没有销毁的时候会一直占有其外部类的实例，当外部类实例退出比如Activity退出，service销毁，内部类占有实例。导致GC不销毁其在内存中的占有。就造成内存泄漏问题。典型例子如AsyncTask）
+- 采用软引用和弱引用
+- 采用内存缓存和磁盘缓存
+
 	***app进程启动的时候，类被ClassLoader加载，静态变量被分配内存，ClassLoader生命周期和进程一致，CL不存在则类被卸载，则静态变量被销毁。
 	   当Activity消毁时，其中的静态变量是存在的，因为静态变量是属全局变量、类变量（不是new出来的那种对象）静态变量是整个应用程序的公共变量。
 	   只有整个应用程序的进程被销毁，静态变量才会被清除，在onDestory里添加android.os.Process.killProcess(android.os.Process.myPid())干掉进程
@@ -377,7 +384,10 @@ java代码同上就要这样改：
 
 
 
-### 17、自定义view ###
+### 17、自定义view,自定义viewgroup，刷新几次 ###
+- onMeasure
+- onLayout
+- onDraw
 ### 18、recyclerview优化、item缓存 ###
 
 ### 19、图片缓存、算法 ###
@@ -396,6 +406,22 @@ java代码同上就要这样改：
   standard、singleTop、singleInstance、singleTask
 ### 24、圆形图片剪裁 ###
 ### 25、git代码冲突解决 ###
+ 	解决本地与远程库冲突
+
+      git add filename
+      git commit 
+      git pull --rebase 
+     (若有冲突，分两种，一是在不同的地方冲突，git可自己合并。二是在同一个地方冲突，自己手动更改，然后)
+      git rebase --continue
+     (重复第三、四步直到所有冲突都解决)
+      git push
+
+如果是在相同文件的不同区域冲突，可以
+
+	git fetch
+	git merge orign/master
+	git push
+
 ### 26、linux内核 ###
 ### 27、职业规划，工作权重自定义排序 ###
 ### 28、spannstringbuilder ###
