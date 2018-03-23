@@ -454,6 +454,7 @@ getContentResolver
 ### 35、崩溃、bug、ANR收集 ###
 
 - 自己封装Logutil
+- traceview
 - 腾讯Bugly、友盟
 - 表脸的做法android:largeHeap="true"使用最大内存值
 - 三方测试，如testin、优测
@@ -482,6 +483,13 @@ XMPP协议一句话总结就是一个可以用于IM功能的协议，传输的�
 **MQTT协议**
 
 >MQTT是Android端实现消息推送方案之一，是一个轻量级的消息发布/订阅协议，它是实现基于手机客户端的消息推送服务器的理想解决方案
+
+### 37、socket连接断开处理 ###
+添加心跳，超时即断开重连
+
+### 38、android数据库高并发处理 ###
+
+greendao、realm
 
 
 
