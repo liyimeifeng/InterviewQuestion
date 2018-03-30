@@ -28,6 +28,9 @@
 ![service生命周期](https://i.imgur.com/MNbIorq.png)
 ### 4、触摸事件分发机制 ###
 事件传递的顺序：Activity -> ViewGroup -> View
+
+[参考这一篇文章](https://www.cnblogs.com/smyhvae/p/4802274.html)
+
 ![事件传递机制](https://i.imgur.com/T6xPrpz.png)
 ![事件分发U型](https://i.imgur.com/cViWJAF.png)
 ### 5、hashmap原理 ###
@@ -175,6 +178,7 @@ HTTP请求报文由3部分组成（**请求行+请求头+请求体**）
 - User-Agent 代理服务器`User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64)`
 ### 11、view缓存 ###
 ### 12、socket通信 ###
+socket一般用于长连接，http一般用于短连接（除下载服务以外）
 ### 13、@DrawableRes图片注解、@LayoutRes注解 ###
    参数前加上@DrawableRes注解即表示参数只接受图片类型
 ### 14、mvp架构 mvvm架构 ###
@@ -451,6 +455,17 @@ getContentResolver
 - 对I/O、Cursor使用完之后要关闭
 - 尽量使用静态内部类防止Activity泄露，例如AsyncTask会隐士的持有Activity的引用
 ### 34、Rxjava操作符 ###
+常用操作符：
+
+- creat
+- from
+- just
+- map
+- flatmap
+- filter
+- zip
+- concat
+
 ### 35、崩溃、bug、ANR收集 ###
 
 - 自己封装Logutil
@@ -460,7 +475,7 @@ getContentResolver
 - 三方测试，如testin、优测
 - 继承UncaughtExceptionHandler，当程序发生Uncaught异常的时候,有该类来接管程序,并记录错误日志
 - 自己搭建bug收集平台
-- ANR会自动创建文件记录，使用adb pull /data/anr/traces.txt拉出文件 
+- ANR会自动创建文件记录，使用**adb pull /data/anr/traces.txt**拉出文件分析 
 
 
 ### 36、IM实时通讯 ###
@@ -491,5 +506,48 @@ XMPP协议一句话总结就是一个可以用于IM功能的协议，传输的�
 
 greendao、realm
 
+什么是**ORM**：
+即对象关系映射，是将面向对象编程语言里的对象与数据库关联起来的一种技术，通俗说就是将java object与SQLite Database关联起来的桥梁
 
+**Greendao功能一览：**
+
+- 高性能（可能是Android最快的ORM）
+- 易用：功能强大的API涵盖关系和链接
+- 最小的内存消耗
+- 精简的库（<100kb），编译时间短，并避免65k方法数量的限制
+- 数据库加密、
+- star数量多，社区强大
+
+**Realm功能一览：**
+
+- 离线状态下应用也可以正常工作
+- 查询快速，复杂查询只需要几纳秒
+- 线程安全，多线程访问同一数据毫无问题
+- 跨平台支持
+- 加密
+- 响应式架构，让realm连接到UI，及时将数据更新反馈给用
+
+### 39、Serializable和Parcelable的区别、优劣 ###
+
+**序列化的起因：**android无法将对象的引用传给Activity或者fragment，需要将这些对象放到一个intent或者bundle里面然后再进行传递
+
+**什么是序列化**：表示将一个对象转换成可存储或者可传输的状态，序列化后的对象可以在网络上进项传输，也可以存储到本地
+
+**为什么要序列化：**
+
+>1、永久性保存对象，保存对象的字节序列到本地文件中
+
+>2、对象在网络上传递
+
+>3、对象在IPC间传递
+
+**区别：**
+
+| 区别 | serializable | parcalable |
+| ------ | ------ | ------ |
+| 所属API | Java API | Android SDK API |
+| 原理 | 序列化和反序列化过程需要大量的IO操作 | 序列化和反序列化过程不需要大量的IO操作 |
+| 开销 | 开销大 | 开销小 |
+| 效率 |  低 | 很高 |
+| 使用场景 | 序列化到本地或者通过网络传输 | 内存序列化 |
 
