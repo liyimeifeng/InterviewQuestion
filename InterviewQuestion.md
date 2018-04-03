@@ -179,6 +179,15 @@ HTTP请求报文由3部分组成（**请求行+请求头+请求体**）
 ### 11、view缓存 ###
 ### 12、socket通信 ###
 socket一般用于长连接，http一般用于短连接（除下载服务以外）
+
+socket属于传输层，有两种实现方式，基于TCP（传输层），或者基于UDP（传输层）。
+Java为socket编程封装了几个重要的类：
+
+- Socket（采用TCP 可靠传输协议）
+- DatagramSocket（传输层协议使用 UDP）
+- ServerSocket（服务器 socket）
+- 
+
 ### 13、@DrawableRes图片注解、@LayoutRes注解 ###
    参数前加上@DrawableRes注解即表示参数只接受图片类型
 ### 14、mvp架构 mvvm架构 ###
@@ -550,4 +559,25 @@ greendao、realm
 | 开销 | 开销大 | 开销小 |
 | 效率 |  低 | 很高 |
 | 使用场景 | 序列化到本地或者通过网络传输 | 内存序列化 |
+
+### 40、requestLayout和invalidate区别 ###
+### 41、dexclassloder和pathclassloder ###
+### 42、避免64k方法限制 ###
+
+ Android 5之前修改build.gradle配置加入依赖
+    
+    //add multidex support library
+      compile 'com.android.support:multidex:1.0.0'
+或者
+
+    defaultConfig {
+    
+    // Enabling multidex support.
+    multiDexEnabled true
+    }
+
+声明Application时声明`android.support.multidex.MultiDexApplication`
+
+43、四中引用，强弱软虚的区别
+
 
