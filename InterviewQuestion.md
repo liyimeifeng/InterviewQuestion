@@ -33,6 +33,9 @@
 
 ![事件传递机制](https://i.imgur.com/T6xPrpz.png)
 ![事件分发U型](https://i.imgur.com/cViWJAF.png)
+**个人理解：**
+触摸事件默认返回的都是super，即一个普通的touch事件走过的流程就是一个U型的图示，通常修改返回值为true的话即是在当层消费事件，修改返回值为false的话通常也就是向下传递，或者向上传递，如果修改onInterceptTouchEvent返回值为true的话，即是在viewgroup层消费该事
+
 ### 5、hashmap原理 ###
 	HashMap是基于hashing的原理，我们使用put(key, value)存储对象到HashMap中，使用get(key)从HashMap中获取对象。
 	当我们给put()方法传递键和值时，我们先对键调用hashCode()方法，返回的hashCode用于找到bucket位置来储存Entry对象。
@@ -186,11 +189,11 @@ Java为socket编程封装了几个重要的类：
 - Socket（采用TCP 可靠传输协议）
 - DatagramSocket（传输层协议使用 UDP）
 - ServerSocket（服务器 socket）
-- 
 
 ### 13、@DrawableRes图片注解、@LayoutRes注解 ###
    参数前加上@DrawableRes注解即表示参数只接受图片类型
 ### 14、mvp架构 mvvm架构 ###
+https://www.jianshu.com/p/734d3693da02
 ### 15、webview使用简述、安全漏洞及android代码和js交互 ###
 **基本用法：**
 
@@ -568,7 +571,7 @@ greendao、realm
     
     //add multidex support library
       compile 'com.android.support:multidex:1.0.0'
-或者
+或者配置这里
 
     defaultConfig {
     
@@ -576,8 +579,13 @@ greendao、realm
     multiDexEnabled true
     }
 
-声明Application时声明`android.support.multidex.MultiDexApplication`
+声明Application时声明成`android.support.multidex.MultiDexApplication`
 
-43、四中引用，强弱软虚的区别
+### 43、四中引用，强弱软虚的区别 ###
+### 44、NDK学习 ###
+https://www.jianshu.com/p/dbee203db243
+
+https://www.jianshu.com/p/9d1a3429badc
+### 45、rxjava内部实现原理 ###
 
 
