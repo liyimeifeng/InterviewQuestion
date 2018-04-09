@@ -564,6 +564,14 @@ greendao、realm
 | 使用场景 | 序列化到本地或者通过网络传输 | 内存序列化 |
 
 ### 40、requestLayout和invalidate区别 ###
+- requestLayout()
+
+控件会重新执行onMeasure()、onLayout()
+
+- invalidate()
+
+重新执行onDraw()方法
+
 ### 41、dexclassloder和pathclassloder ###
 ### 42、避免64k方法限制 ###
 
@@ -582,10 +590,62 @@ greendao、realm
 声明Application时声明成`android.support.multidex.MultiDexApplication`
 
 ### 43、四中引用，强弱软虚的区别 ###
+- 强引用
+
+比如
+
+    Object object =new Object();
+    String str ="hello";
+强引用有引用变量指向时用于不会被垃圾回收，JVM宁愿抛出内存溢出也不会回收对象
+
+- 软引用（SoftReference）
+
+内存不足则会回收这些对象的内存，否则不会回收
+
+- 弱引用（WeakReference）
+
+当JVM进行垃圾回收时，无论内存是否充足，都会回收被弱引用关联的对象
+
+- 虚引用（PhantomReference）
+
+虚引用在任何时候都会被垃圾回收器回收
+
 ### 44、NDK学习 ###
 https://www.jianshu.com/p/dbee203db243
 
 https://www.jianshu.com/p/9d1a3429badc
 ### 45、rxjava内部实现原理 ###
+线程池
 
+### 46、java GC回收机制及算法 ###
+- 停止-复制算法
+>程序暂停运行，启动GC，GC从堆或静态存储区开始遍历所有对象，判断对象是否“活”的对象，如果是活不删除，反之删除。判断是否“活”就是判断该对象是否有被其他对象引用，从链上去查找。当是活对象时，GC会从另外堆里开避一个大空间，然后将活对象复制一份到新空间里，在复制时按着紧密排列，同时更新所有引用地址为新的地址，不活对象原封不动。遍历完后，再遍历一次，这次是将不活的对象彻底给删除。
 
+>优点：所有对象能够重新紧密排列，不会出现内存碎片，这对以后创建对象能提供更快的效率。
+
+>缺点：占用的内存空间大，要原对象的2倍空间；这种模式无论如何所有活的对象都要复制一份，假设遍历到最后，对象很稳定，只出现少量垃圾对象或者根本没垃圾对象，这时已经做了复制工作，浪费了资源。
+
+- 标记-删除算法
+>程序暂停运行，启动GC，GC从堆或静态存储区开始遍历所有对象，判断对象是否“活”的对象，如果是活不删除，反之删除。判断是否“活”就是判断该对象是否有被其他对象引用，从链上去查找。当是活对象时，会给对象给个标记符号，死对象则不标记，遍历完后，第二次遍历时，只保留标记的对象，把所有没标记的对象都删除。
+### 47、final,finally,finalize的区别 ###
+- final—修饰符（关键字）
+>不能再派生出新的子类，不能作为父类被继承，修饰变量必须给定初始值，修饰方法只能使用，不能重载，一个类不能既被声明为abstract，又被声明为final
+
+- finally
+>做异常处理，如果发生异常，被catch住，然后就会进入finally块
+
+- finalize()
+>方法名，在Object中定义的，因此所有类都继承了它，可以重写，是在垃圾收集器**清除该对象之前**调用
+
+### 48、Activity,Window跟View之间的关系 ###
+1. Activity本身不显示控件，其声明周期由ActivityManager维护，Activity在attach调用（在onCreat之前调用）时创建一个PhoneWindow，交由PW显示view，PW就是Window的子类
+2. 在Activity中调用setContentView（R.layout.xx)实际上是调用getWindow().setContentView()
+3. 调用PhoneWindow中的setContentView方法
+4. 创建ViewGroup的子类ParentView，实际上是创建DecorView作为FrameLayout的子类
+5. 将指定的R.layout放入进行填充
+
+所以关系应该是`Activity——>Window——>View`
+>Activity就是存放view对象的容器，也是界面的载体，view即一个个视图的对象，window是一个抽象类，是一个顶层的窗口，唯一实例就是PhoneWindow，它提供标准的用户界面策略
+ 
+### 49、wait和sleep区别 ###
+### 50、线程间通信 ###
