@@ -462,10 +462,11 @@ java代码同上就要这样改：
 getContentResolver
 ### 33、OOM问题 ###
 - 图片处理使用三级缓存
-- 少用静态变量
+- 少用静态变量（静态变量和程序的声明周期一样长，如果静态引用了Activity，Activity退出后就不能及时销毁，造成泄露，比如就要避免单例模式持有Activity的引用）
 - 少用枚举
 - 对I/O、Cursor使用完之后要关闭
 - 尽量使用静态内部类防止Activity泄露，例如AsyncTask会隐士的持有Activity的引用
+- Activity销毁时onDestroy关闭或者清除掉动画、集合中对象等，清理内存
 ### 34、Rxjava操作符 ###
 常用操作符：
 
@@ -659,3 +660,86 @@ https://www.jianshu.com/p/9d1a3429badc
 - socket是对TCP/IP的封装，本身并不是协议，而是一个调用接口，通过socket我们才能使用TCP/IP协议
 
 >“我们在传输数据时，可以只使用(传输层)TCP/IP协议，但是那样的话，如 果没有应用层，便无法识别数据内容，如果想要使传输的数据有意义，则必须使用到应用层协议，应用层协议有很多，比如HTTP、FTP、TELNET等
+### 52、arraylist去重 ，list排序###
+- 遍历去重
+
+    	List<String> newList = new  ArrayList<String>(); 
+         for (String cd:list) {   //遍历之前的旧list
+            if(!newList.contains(cd)){  //contain判断
+                newList.add(cd);
+            }
+        }
+- 使用set去重 （set集合框架本身不允许重复）
+		
+		//不保证顺序
+		 Set set = new  HashSet();  
+         List newList = new  ArrayList(); 
+         set.addAll(list);
+         newList.addAll(set);
+
+#### list排序 ####
+使用`Collections.sort()`，并让要比较的对象实现`Commparator`接口
+### 53、Android系统架构 ###
+
+![Android系统架构](https://i.imgur.com/ufE6FWY.jpg)
+		
+### 54、ContentProvider如何实现数据共享 ###
+需要继承ContentProvider类，并重写该类用于提供数据和存储数据的方法，就可以向其他应用共享数据
+### 55、Activity屏幕切换时的声明周期 ###
+onSaveIntanceState ——> onPause ——> onStop ——> onDestroy ——>onCreat ——> onStart ——> onRestoreInstanceState ——>onResume
+### 56、Android IPC的方式，IPC的机制 ###
+![](https://i.imgur.com/2tiJTOv.png)
+
+**Binder的系统架构**
+
+![](https://i.imgur.com/2JYh6M8.png)
+
+1.Service Manager 
+
+>Service Manager主要负责Android系统中所有的服务，当客户端要与服务端进行通信时，首先就会通过Service Manager来查询和取得所需要交互的服务。当然，每个服务也都需要向Service Manager注册自己提供的服务，以便能够供服务端进行查询和获取
+
+2.服务（Service）
+
+>这里的服务即上面所说的服务端，通常也是Android的系统服务，通过Service Manager可以查询和获取某个Server
+
+3.客户端
+
+>这里的客户端一般是指Android系统上面的应用服务。它可以请求Service中的服务，比如Activity
+
+4.服务代理
+
+>服务代理是指在客户端应用程序中生成的Server代理（proxy）。从应用程序的角度来看，服务代理和本地对象没有差别，都可以调用其方法，方法都是同步的，并且返回相应的结果。服务代理也是Binder机制的核心模块。
+
+5.Binder驱动
+
+>用于实现Binder的设备驱动，主要负责组织Binder的服务节点，调用Binder相关的处理线程，完成实际的Binder传输等，他位于Binder结构的最底层（即Linux内核层）。
+
+### 57、String和StringBuilder以及StringBuffer，HashMap、HashTable以及HashSet ###
+    String 字符串常量
+    StringBuffer 字符串变量（线程安全，StringBuffer中很多方法可以带有synchronized关键字，所以可以保证线程是安全的）
+    StringBuilder 字符串变量（非线程安全）
+	在大部分情况下 StringBuffer > String
+	在大部分情况下 StringBuilder > StringBuffer
+	运行速度快慢为：StringBuilder > StringBuffer > String
+
+**StringBuilder：适用于单线程下在字符缓冲区进行大量操作的情况**
+
+**StringBuffer：适用多线程下在字符缓冲区进行大量操作的情况**
+
+**String不能被继承，因为他是final常量**
+
+	HashMap是非线程安全的，HashTable是线程安全的
+	HashMap可以接受null的key和null的value，HashTable不行
+	　
+
+HashMap和HashSet的区别：
+
+| HashMap | HashSet |
+| ------ | ------ |
+| 实现了Map接口 |实现了Set接口  |
+|  存储键值对|仅存储对象  |
+|  调用put()向map中添加元素|调用add()向Set中添加元素 |
+|  HashMap使用key计算Hashcode|HashSet使用成员对象计算hashcode值  |
+|  HashMap相对于Hashset较快，因为它使用唯一的键获取对象|HashSet较HashMap来说比较慢 |
+### 58、依赖注入和反射机制 、NIO###
+### 59、JDK 1.7 和JDK 1.8的迭代遍历 ###
